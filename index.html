@@ -3,14 +3,16 @@
     <head>
     <title>Decimal-64 Floating Point Converter</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="script.js"></script>
     </head>
     <body>
+        <script src="script.js"></script>
         <div class="container">
             <h1>Decimal-64 Floating Point Converter</h1>
             <label for="decimalInput">Enter Decimal Value:</label>
             <input type="text" id="decimalInput">
-            <button onclick="convertToDecimal64">Convert</button>
+            <label>10^</label>
+            <input type="text" id="exponent">
+            <button onclick="convertToDecimal64()">Convert</button>
             <p id="decimal64Output"></p>
         </div>
     </body>
