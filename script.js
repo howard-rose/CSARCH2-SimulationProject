@@ -14,10 +14,35 @@ convert to hex
 */
 
 function convertToDecimal64() {
-    const dec = Math.round(document.getElementById("decimalInput").value)
-    const exp = document.getElementById("exponent").value
-    console.log(dec)
-    console.log(exp)
+    let inpType = document.getElementById("binType").checked ? "binary" : "decimal";
+    let dec = 0
+    let exp = 0
+    let errmsg = ""
+    
+    if (inpType === "binary") {
+        let bin = document.getElementById("decimalInput").value
+        console.log("binary " + bin)
+        dec = parseInt(bin, 2)
+        console.log("decimal ver " + dec)
+        bin = document.getElementById("exponent").value
+        console.log("exp bin " + bin)
+        exp = parseInt(bin, 2)
+        console.log("exp dec-ver " + exp)
+    } else {
+        let decimalInput = document.getElementById("decimalInput").value;
+        if (/^[01]+$/.test(decimalInput)) {
+            console.log("error: invalid input");
+            errmsg = "Invalid input. You must enter a decimal number."
+            document.getElementById("err-msg").innerText = errmsg
+            return;
+        }
+        dec = Math.round(document.getElementById("decimalInput").value)
+        exp = document.getElementById("exponent").value
+        console.log(dec)
+        console.log(exp)
+    }
+
+    console.log(inpType)
 
     if (dec > 9999999999999999) {
         console.log("error")
@@ -228,5 +253,9 @@ function convertToDecimal64() {
     }
     let dec64hex = binaryToHex(dec64)
     console.log(dec64hex)
+    document.getElementById("sign-bit").innerText = sbit
+    document.getElementById("comb-field").innerText = cf
+    document.getElementById("exp-cont").innerText = expfield
+    document.getElementById("coeff-cont").innerText = bcd1 + " " + bcd2 + " " + bcd3 + " " + bcd4 + " " + bcd5
     document.getElementById("decimal64Output").innerText = dec64hex
 }

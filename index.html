@@ -5,8 +5,69 @@
     <link rel="stylesheet" href="styles.css">
     </head>
     <body>
-        <script src="script.js"></script>
         <div class="container">
+            IEEE754 Double Precision 64-bit<br>Floating Point Converter
+            <div class="inp-choices">
+                <div>Input option:</div>
+                <div><input class="ms-60" type="radio" id="binType" name="inputOption" value="binary">
+                <label for="binType">Binary</label>
+                <input class="ms-16" type="radio" id="decType" name="inputOption" value="decimal" checked>
+                <label for="decType">Decimal</label></div>
+            </div>
+            <div class="inp-choices">
+                <label for="round">Rounding option:</label>
+                <div>
+                    <select name="round" id="round" class="ms-16">
+                        <option value="2even">nearest, ties to even</option>
+                        <option value="2notz">nearest, ties away from zero</option>
+                        <option value="2zero">to zero</option>
+                        <option value="2posinf">to (+) infinity</option>
+                        <option value="2neginf">to (-) infinity</option>
+                      </select>
+                </div>
+            </div>
+            <div class="inp-choices">
+                <label for="exptxt">Export to .txt file?</label>
+                <input type="checkbox" id="exptxt" name="exptxt" value="yes">
+            </div>
+            <div class="input">
+                <label>Input:</label>
+                <input type="text" id="decimalInput">
+                <label>E</label>
+                <input type="text" id="exponent">
+            </div>
+            <button onclick="convertToDecimal64()">Convert</button>
+            <div id="err-msg"></div>
+
+            <div class="output">
+                <div class="d-flex flex-around">
+                    <div class="d-flex flex-col"> <!--sign bit-->
+                        <div class="m-50" id="sign-bit">0</div>
+                        <div class="o-label m-50">Sign</div>
+                    </div>
+                    <div class="d-flex flex-col"> <!--combi bit-->
+                        <div id="comb-field">00000</div>
+                        <div class="o-label">Combi Field</div>
+                    </div>
+                    <div class="d-flex flex-col"> <!--combi bit-->
+                        <div id="exp-cont">00000000</div>
+                        <div class="o-label">Exp Cont.</div>
+                    </div>
+                </div>
+                <div>
+                    <div id="coeff-cont">00000000000 0000000000
+                        00000000000 0000000000
+                        0000000000</div>
+                    <div class="o-label">Coeff Cont.</div>
+                </div>
+                <div>
+                    <div id="decimal64Output">0000000000000000</div>
+                    <div class="o-label">Hexadecimal</div>
+                </div>
+            </div>
+        </div>
+        <script src="script.js"></script>
+        <!-- <div class="container">
             <h1>Decimal-64 Floating Point Converter</h1>
             <label for="decimalInput">Enter Decimal Value:</label>
             <input type="text" id="decimalInput">
@@ -14,6 +75,6 @@
             <input type="text" id="exponent">
             <button onclick="convertToDecimal64()">Convert</button>
             <p id="decimal64Output"></p>
-        </div>
+        </div>-->
     </body>
 </html>
