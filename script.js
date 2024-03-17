@@ -36,11 +36,11 @@ function convertToDecimal64() {
         msd = strDec.charAt(0)
     }
 
-    console.log(sbit)
-    console.log(msd)
+    console.log(`Sign bit: ${sbit}`)
+    console.log(`MSD: ${msd}`)
 
     let eprime = parseInt(exp) + 398
-    console.log(eprime)
+    console.log(`E': ${eprime}`)
 
     function decimalToBinary(decimalNumber) { 
         let binaryString = decimalNumber.toString(2)
@@ -62,9 +62,9 @@ function convertToDecimal64() {
     } 
 
     binMsd = decimalToBinary(parseInt(msd))
-    console.log(binMsd)
+    console.log(`MSD binary: ${binMsd}`)
     binEp = epToBinary(eprime)
-    console.log(binEp)
+    console.log(`E' binary: ${binEp}`)
 
     let cf = ''
     //gets combi field
@@ -74,11 +74,11 @@ function convertToDecimal64() {
     else {
         cf = "11" + binEp.substring(0,2) + binMsd.slice(-1)
     }
-    console.log(cf)
+    console.log(`Combi Field: ${cf}`)
 
     //exp field
     expfield = binEp.slice(-8)
-    console.log(expfield)
+    console.log(`Exp Field: ${expfield}`)
 
     //makes int to packed bcd, pads 0s if less than 4 bits
     function decimalTo3digitbin(decimalNumber) {
@@ -195,15 +195,10 @@ function convertToDecimal64() {
             return coeffcont;
         }
         f1 = dec1(strDec)
-        console.log(f1)
         f2 = dec2(strDec)
-        console.log(f2)
         f3 = dec3(strDec)
-        console.log(f3)
         f4 = dec4(strDec)
-        console.log(f4)
         f5 = dec5(strDec)
-        console.log(f5)
     }  
     else {
         function dec1(string) {
@@ -236,16 +231,18 @@ function convertToDecimal64() {
             return coeffcont;
         }
         f1 = dec1(strDec)
-        console.log(f1)
         f2 = dec2(strDec)
-        console.log(f2)
         f3 = dec3(strDec)
-        console.log(f3)
         f4 = dec4(strDec)
-        console.log(f4)
         f5 = dec5(strDec)
-        console.log(f5)
     } 
+
+    console.log('Coeff Cont. Decimal:')
+    console.log(f1)
+    console.log(f2)
+    console.log(f3)
+    console.log(f4)
+    console.log(f5)
 
     bcd1 = decimalToDenselyPackedBCD(f1)
     bcd2 = decimalToDenselyPackedBCD(f2)
@@ -253,6 +250,7 @@ function convertToDecimal64() {
     bcd4 = decimalToDenselyPackedBCD(f4)
     bcd5 = decimalToDenselyPackedBCD(f5)
 
+    console.log('Coeff Cont. BCD:')
     console.log(bcd1)
     console.log(bcd2)
     console.log(bcd3)
@@ -261,7 +259,7 @@ function convertToDecimal64() {
 
     //dec 64 fp rep in binary
     let dec64 = sbit + cf + expfield + bcd1 + bcd2 + bcd3 + bcd4 + bcd5
-    console.log(dec64)
+    console.log(`Dec-64 Binary: ${dec64}`)
 
     function binaryToHex(binaryString) {  
         // Convert binary string to hexadecimal
@@ -275,7 +273,7 @@ function convertToDecimal64() {
         return hexString;
     }
     let dec64hex = binaryToHex(dec64)
-    console.log(dec64hex)
+    console.log(`Dec-64 Hex: ${dec64hex}`)
     document.getElementById("sign-bit").innerText = sbit
     document.getElementById("comb-field").innerText = cf
     document.getElementById("exp-cont").innerText = expfield
