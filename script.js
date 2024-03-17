@@ -1,31 +1,19 @@
-/*
-error checking exp -398 to 369
-make base 16 digits
-get msd and convert e' to binary 10 bits DONE
-e'= e + 398 DONE
-sign bit 0 or 1 DONE
-get cf DONE
-    - check msb if 0-7 or 8-9
-    - if 0-7 e' first 2 msb, msd last 3 bits
-    - if 8-9 11 then e' first 2 msb, msd last bit
-last 8 of e'
-densely packed bcd of rest of base
-convert to hex
-*/
-
 function convertToDecimal64() {
-    const dec = Math.round(document.getElementById("decimalInput").value)
+    const strDec = document.getElementById("decimalInput").value
     const exp = document.getElementById("exponent").value
-    console.log(dec)
+    console.log(strDec)
     console.log(exp)
 
+    let dec = parseInt(strDec)
+
+    //if dec input is greater than 16 digits
     if (dec > 9999999999999999) {
         console.log("error")
     }
 
-    let strDec = dec.toString()
     let msd = ''
 
+    //checks for negative
     if(dec < 0) {
         sbit = 1
         msd = strDec.charAt(1)
@@ -37,6 +25,7 @@ function convertToDecimal64() {
 
     console.log(sbit)
     console.log(msd)
+
     let eprime = parseInt(exp) + 398
     console.log(eprime)
 
@@ -44,12 +33,13 @@ function convertToDecimal64() {
         let binaryString = decimalNumber.toString(2)
         let leadingZeros = 4 - binaryString.length
 
-    // Pad the binary string with leading zeros
+        // Pad the binary string with leading zeros
         let paddedBinaryString = '0'.repeat(leadingZeros) + binaryString
 
         return paddedBinaryString
     }
 
+    //makes e' to binary
     function epToBinary(decimalNumber) { 
         let binaryString = decimalNumber.toString(2)
         let leadingZeros = 10 - binaryString.length
@@ -57,13 +47,14 @@ function convertToDecimal64() {
 
         return paddedBinaryString
     } 
+
     binMsd = decimalToBinary(parseInt(msd))
     console.log(binMsd)
     binEp = epToBinary(eprime)
     console.log(binEp)
 
     let cf = ''
-
+    //gets combi field
     if (parseInt(msd) < 8) {
         cf = binEp.substring(0,2) + binMsd.slice(-3)
     }
@@ -72,9 +63,11 @@ function convertToDecimal64() {
     }
     console.log(cf)
 
+    //exp field
     expfield = binEp.slice(-8)
     console.log(expfield)
 
+    //makes int to packed bcd, pads 0s if less than 4 bits
     function decimalTo3digitbin(decimalNumber) {
         let binaryString = ''
     
@@ -150,48 +143,40 @@ function convertToDecimal64() {
         return ''
     }
 
+    //initialize coeff continuation
     let f1 = ''
     let f2 = ''
     let f3 = ''
     let f4 = ''
     let f5 = ''
-    
+
+    //gets coeff continuation checks if sign bit is pos or nega
     if(sbit == 0) {
         function dec1(string) {
-            // Convert the decimal to a string
-            // Extract the next three digits
             let coeffcont = string.substring(1, 4)
         
             return coeffcont
         }
 
         function dec2(string) {
-            // Convert the decimal to a string
-            // Extract the next three digits
             let coeffcont = string.substring(4, 7);
         
             return coeffcont;
         }
 
         function dec3(string) {
-            // Convert the decimal to a string
-            // Extract the next three digits
             let coeffcont = string.substring(7, 10);
         
             return coeffcont;
         }
 
         function dec4(string) {
-            // Convert the decimal to a string
-            // Extract the next three digits
             let coeffcont = string.substring(10, 13);
         
             return coeffcont;
         }
 
         function dec5(string) {
-            // Convert the decimal to a string
-            // Extract the next three digits
             let coeffcont = string.substring(13, 16);
         
             return coeffcont;
@@ -209,40 +194,30 @@ function convertToDecimal64() {
     }  
     else {
         function dec1(string) {
-            // Convert the decimal to a string
-            // Extract the next three digits
             let coeffcont = string.substring(2, 5)
         
             return coeffcont
         }
     
         function dec2(string) {
-            // Convert the decimal to a string
-            // Extract the next three digits
             let coeffcont = string.substring(5, 8);
         
             return coeffcont;
         }
     
         function dec3(string) {
-            // Convert the decimal to a string
-            // Extract the next three digits
             let coeffcont = string.substring(8, 11);
         
             return coeffcont;
         }
     
         function dec4(string) {
-            // Convert the decimal to a string
-            // Extract the next three digits
             let coeffcont = string.substring(11, 14);
         
             return coeffcont;
         }
     
         function dec5(string) {
-            // Convert the decimal to a string
-            // Extract the next three digits
             let coeffcont = string.substring(14, 17);
         
             return coeffcont;
@@ -271,6 +246,7 @@ function convertToDecimal64() {
     console.log(bcd4)
     console.log(bcd5)
 
+    //dec 64 fp rep in binary
     let dec64 = sbit + cf + expfield + bcd1 + bcd2 + bcd3 + bcd4 + bcd5
     console.log(dec64)
 
