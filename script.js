@@ -10,15 +10,14 @@ function convertToDecimal64() {
         document.getElementById("err-msg").innerText = errmsg
         return;
     }
-    dec = Math.round(document.getElementById("decimalInput").value)
+
+    strDec = document.getElementById("decimalInput").value
     exp = document.getElementById("exponent").value
+
+    dec = parseInt(strDec)
+
     console.log(dec)
     console.log(exp)
-
-    // const strDec = document.getElementById("decimalInput").value
-    // const exp = document.getElementById("exponent").value
-
-    // let dec = parseInt(strDec)
 
     //if dec input is greater than 16 digits
     if (dec > 9999999999999999) {
