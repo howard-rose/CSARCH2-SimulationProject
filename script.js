@@ -23,7 +23,7 @@ function convertToDecimal64() {
         console.log("error")
     }
 
-    let strDec = dec.toString();
+    let strDec = dec.toString()
     let msd = ''
 
     if(dec < 0) {
@@ -41,21 +41,21 @@ function convertToDecimal64() {
     console.log(eprime)
 
     function decimalToBinary(decimalNumber) { 
-        let binaryString = decimalNumber.toString(2);
-        let leadingZeros = 4 - binaryString.length;
+        let binaryString = decimalNumber.toString(2)
+        let leadingZeros = 4 - binaryString.length
 
     // Pad the binary string with leading zeros
-        let paddedBinaryString = '0'.repeat(leadingZeros) + binaryString;
+        let paddedBinaryString = '0'.repeat(leadingZeros) + binaryString
 
-        return paddedBinaryString;
+        return paddedBinaryString
     }
 
     function epToBinary(decimalNumber) { 
-        let binaryString = decimalNumber.toString(2);
-        let leadingZeros = 10 - binaryString.length;
-        let paddedBinaryString = '0'.repeat(leadingZeros) + binaryString;
+        let binaryString = decimalNumber.toString(2)
+        let leadingZeros = 10 - binaryString.length
+        let paddedBinaryString = '0'.repeat(leadingZeros) + binaryString
 
-        return paddedBinaryString;
+        return paddedBinaryString
     } 
     binMsd = decimalToBinary(parseInt(msd))
     console.log(binMsd)
@@ -76,13 +76,13 @@ function convertToDecimal64() {
     console.log(expfield)
 
     function decimalTo3digitbin(decimalNumber) {
-        let binaryString = '';
+        let binaryString = ''
     
         // Convert each digit to binary and pad to 4 bits
         for (let i = 0; i < 3; i++) {
-            let digit = (decimalNumber % 10).toString(2).padStart(4, '0');
-            binaryString = digit + binaryString; // prepend the binary representation
-            decimalNumber = Math.floor(decimalNumber / 10); // move to the next digit
+            let digit = (decimalNumber % 10).toString(2).padStart(4, '0')
+            binaryString = digit + binaryString // prepend the binary representation
+            decimalNumber = Math.floor(decimalNumber / 10) // move to the next digit
         }
         
         return binaryString;
@@ -90,115 +90,174 @@ function convertToDecimal64() {
 
     function decimalToDenselyPackedBCD(number) {
         // if negative, convert to positive
-        number *= (number < 0) ? -1 : 1;
+        number *= (number < 0) ? -1 : 1
         return convertToDenselyPacked(decimalTo3digitbin(number).split(''));
     }
     
     function convertToDenselyPacked(packed) {
-        const keys = [packed[0], packed[4], packed[8]]; // iea
+        const keys = [packed[0], packed[4], packed[8]] // iea
     
         if (keys.every((val, index) => val === ['0', '0', '0'][index])) {
             return [
                 packed[1], packed[2], packed[3], // bcd
                 packed[5], packed[6], packed[7], // fgh
                 '0', packed[9], packed[10], packed[11] // 0jkm
-            ].join('');
+            ].join('')
         } else if (keys.every((val, index) => val === ['0', '0', '1'][index])) {
             return [
                 packed[1], packed[2], packed[3], // bcd
                 packed[5], packed[6], packed[7], // fgh
                 '1', '0', '0', packed[11] // 100m
-            ].join('');
+            ].join('')
         } else if (keys.every((val, index) => val === ['0', '1', '0'][index])) {
             return [
                 packed[1], packed[2], packed[3], // bcd
                 packed[9], packed[10], packed[7], // jkh
                 '1', '0', '1', packed[11] // 100m
-            ].join('');
+            ].join('')
         } else if (keys.every((val, index) => val === ['0', '1', '1'][index])) {
             return [
                 packed[1], packed[2], packed[3], // bcd
                 '1', '0', packed[7], // 10h
                 '1', '1', '1', packed[11] // 111m
-            ].join('');
+            ].join('')
         } else if (keys.every((val, index) => val === ['1', '0', '0'][index])) {
             return [
                 packed[9], packed[10], packed[3], // jkd
                 packed[5], packed[6], packed[7], // fgh
                 '1', '1', '0', packed[11] // 110m
-            ].join('');
+            ].join('')
         } else if (keys.every((val, index) => val === ['1', '0', '1'][index])) {
             return [
                 packed[5], packed[6], packed[3], // fgd
                 '0', '1', packed[7], // 01h
                 '1', '1', '1', packed[11] // 111m
-            ].join('');
+            ].join('')
         } else if (keys.every((val, index) => val === ['1', '1', '0'][index])) {
             return [
                 packed[9], packed[10], packed[3], // jkd
                 '0', '0', packed[7], // 00h
                 '1', '1', '1', packed[11] // 111m
-            ].join('');
+            ].join('')
         } else if (keys.every((val, index) => val === ['1', '1', '1'][index])) {
             return [
                 '0', '0', packed[3], // 00d
                 '1', '1', packed[7], // 11h
                 '1', '1', '1', packed[11] // 111m
-            ].join('');
+            ].join('')
         }
     
-        return '';
+        return ''
     }
 
-    function dec1(string) {
-        // Convert the decimal to a string
-        // Extract the next three digits
-        let coeffcont = string.substring(1, 4);
+    let f1 = ''
+    let f2 = ''
+    let f3 = ''
+    let f4 = ''
+    let f5 = ''
     
-        return coeffcont;
-    }
+    if(sbit == 0) {
+        function dec1(string) {
+            // Convert the decimal to a string
+            // Extract the next three digits
+            let coeffcont = string.substring(1, 4)
+        
+            return coeffcont
+        }
 
-    function dec2(string) {
-        // Convert the decimal to a string
-        // Extract the next three digits
-        let coeffcont = string.substring(4, 7);
-    
-        return coeffcont;
-    }
+        function dec2(string) {
+            // Convert the decimal to a string
+            // Extract the next three digits
+            let coeffcont = string.substring(4, 7);
+        
+            return coeffcont;
+        }
 
-    function dec3(string) {
-        // Convert the decimal to a string
-        // Extract the next three digits
-        let coeffcont = string.substring(7, 10);
-    
-        return coeffcont;
-    }
+        function dec3(string) {
+            // Convert the decimal to a string
+            // Extract the next three digits
+            let coeffcont = string.substring(7, 10);
+        
+            return coeffcont;
+        }
 
-    function dec4(string) {
-        // Convert the decimal to a string
-        // Extract the next three digits
-        let coeffcont = string.substring(10, 13);
-    
-        return coeffcont;
-    }
+        function dec4(string) {
+            // Convert the decimal to a string
+            // Extract the next three digits
+            let coeffcont = string.substring(10, 13);
+        
+            return coeffcont;
+        }
 
-    function dec5(string) {
-        // Convert the decimal to a string
-        // Extract the next three digits
-        let coeffcont = string.substring(13, 16);
+        function dec5(string) {
+            // Convert the decimal to a string
+            // Extract the next three digits
+            let coeffcont = string.substring(13, 16);
+        
+            return coeffcont;
+        }
+        f1 = dec1(strDec)
+        console.log(f1)
+        f2 = dec2(strDec)
+        console.log(f2)
+        f3 = dec3(strDec)
+        console.log(f3)
+        f4 = dec4(strDec)
+        console.log(f4)
+        f5 = dec5(strDec)
+        console.log(f5)
+    }  
+    else {
+        function dec1(string) {
+            // Convert the decimal to a string
+            // Extract the next three digits
+            let coeffcont = string.substring(2, 5)
+        
+            return coeffcont
+        }
     
-        return coeffcont;
-    }
-    let f1 = dec1(strDec)
-    console.log(f1)
-    let f2 = dec2(strDec)
-    console.log(f2)
-    let f3 = dec3(strDec)
-    console.log(f3)
-    let f4 = dec4(strDec)
-    console.log(f4)
-    let f5 = dec5(strDec)
-    console.log(f5)
+        function dec2(string) {
+            // Convert the decimal to a string
+            // Extract the next three digits
+            let coeffcont = string.substring(5, 8);
+        
+            return coeffcont;
+        }
+    
+        function dec3(string) {
+            // Convert the decimal to a string
+            // Extract the next three digits
+            let coeffcont = string.substring(8, 11);
+        
+            return coeffcont;
+        }
+    
+        function dec4(string) {
+            // Convert the decimal to a string
+            // Extract the next three digits
+            let coeffcont = string.substring(11, 14);
+        
+            return coeffcont;
+        }
+    
+        function dec5(string) {
+            // Convert the decimal to a string
+            // Extract the next three digits
+            let coeffcont = string.substring(14, 17);
+        
+            return coeffcont;
+        }
+        f1 = dec1(strDec)
+        console.log(f1)
+        f2 = dec2(strDec)
+        console.log(f2)
+        f3 = dec3(strDec)
+        console.log(f3)
+        f4 = dec4(strDec)
+        console.log(f4)
+        f5 = dec5(strDec)
+        console.log(f5)
+    } 
 
     bcd1 = decimalToDenselyPackedBCD(f1)
     bcd2 = decimalToDenselyPackedBCD(f2)
