@@ -1,10 +1,120 @@
+function roundTo16(coeffStr, isNegative) {
+    const method = document.getElementById('round').value
+    console.log('=== ROUNDING ===')
+    console.log(method)
+
+    // split coeff into first 16 digits and the rest
+    const coeffStr_whole = coeffStr.slice(0, 16)
+    const coeffStr_fraction = coeffStr.slice(16)
+    console.log(`coeff whole part (first 16 digits): ${coeffStr_whole}`)
+    console.log(`coeff fractional part: ${coeffStr_fraction}`)
+    
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number
+    // JS has precision issues with representing >16 digits since it uses binary-64 format 
+    // for example (can test these in console), 
+    // 1234123412341234.1 will be represented as 1234123412341234 (immediately rounded off)
+    // 1234123412341234.9 will be represented as 1234123412341235 (immediately rounded off)
+    // 1234123412341234.45 will be represented as 1234123412341234.5 (causes issues depending if ties even or ties away)
+    // since we need to account for different rounding methods such as to +/-inf, 
+    // we can instead round based on the first digit of the fractional part so there is no loss in precision
+    const coeffNum_whole = parseInt(coeffStr_whole)
+    const first_fraction_digit = coeffStr_fraction.charAt(0)
+    
+    // "round" based on first fraction digit (will result in either 0 or 1), and add it to whole part
+    let coeffNum_fraction_rounded = null
+
+    roundTiesAway = frac => ((frac >= '0') && (frac <= '4')) ? 0 : 1
+    roundUp = frac => (frac === '0') ? 0 : 1
+
+    switch (method) {
+        case '2even':            
+            // if fractional part is exactly 5 with no digits after it:
+            console.log(`trimmed coeff fractional part: ${trimTrailingZeros(coeffStr_fraction)}`)
+            if (trimTrailingZeros(coeffStr_fraction) === '5') {
+                // check whole part: if even, add 0, else add 1
+                coeffNum_fraction_rounded = coeffNum_whole % 2
+            } else {
+                coeffNum_fraction_rounded = roundTiesAway(first_fraction_digit)
+            }
+            break
+        case '2notz':
+            coeffNum_fraction_rounded = roundTiesAway(first_fraction_digit)
+            break
+        case '2zero':
+            coeffNum_fraction_rounded = 0
+            break
+        case '2posinf':
+            coeffNum_fraction_rounded = isNegative ? 0 : roundUp(first_fraction_digit) 
+            break
+        case '2neginf':
+            coeffNum_fraction_rounded = isNegative ? roundUp(first_fraction_digit) : 0
+    }
+
+    const coeffNum_rounded = coeffNum_whole + coeffNum_fraction_rounded
+    console.log(`final rounded coeff: ${coeffNum_rounded}`)
+    console.log('================')
+    return coeffNum_rounded.toString()
+}
+
+function trimTrailingZeros(str) {
+    for (let i = str.length - 1; i >= 0; i--) {
+        if (str.charAt(i) !== '0')
+            return str.slice(0, i + 1)
+    }
+    return ''
+}
+
+function normalize(coeffInput, expInput) {
+    // separate input into integer and fractional part
+    const [_, minus_sign, coeff_whole, coeff_fraction] = coeffInput.match(/^(-?)([0-9]+)(?:\.([0-9]+))?$/)
+    console.log('=== NORMALIZATION ===')
+    console.log(`minus_sign: ${minus_sign}`)
+    console.log(`coeff_whole: ${coeff_whole}`)
+    console.log(`coeff_fraction: ${coeff_fraction}`)
+
+    const sign_bit = (minus_sign === '-') ? 1 : 0
+    let coeff = coeff_whole
+    let exp = parseInt(expInput)
+
+    // if there is a fractional part, adjust exponent and combine into coefficient
+    if (coeff_fraction) {
+        // remove trailing zeros from fraction
+        coeff_fraction_trimmed = trimTrailingZeros(coeff_fraction)
+        console.log(`coeff_fraction_trimmed: ${coeff_fraction_trimmed}`)
+
+        coeff += coeff_fraction_trimmed
+        console.log(`coeff: ${coeff}`)
+        exp += coeff_fraction_trimmed.length
+        console.log(`exp after removing decimal: ${exp}`)
+    } 
+
+    // if full coefficient has more than 16 digits, round
+    if (coeff.length > 16) {
+        // adjust exponent such that the decimal point is after the 16th digit
+        exp -= coeff.length - 16
+        console.log(`exp after rounding: ${exp}`)
+
+        coeff = roundTo16(coeff, (minus_sign === '-'))
+    }
+
+    // if full coefficient has less than 16 digits, pad
+    coeff = coeff.padStart(16, '0')
+
+    console.log('RETURN VALUES')
+    console.log(`sign bit: ${sign_bit}`)
+    console.log(`coeff: ${coeff}`)
+    console.log(`final exp: ${exp}`)
+    console.log('=====================')
+    return [sign_bit, coeff, exp]
+}
+
 function convertToDecimal64() {
-    let dec = 0
+    // let dec = 0
     let exp = 0
     let errmsg = ""    
 
     let decimalInput = document.getElementById("decimalInput").value;
-    if (!/^[0-9]+$/.test(decimalInput)) {
+    if (!/^-?[0-9]+(?:\.[0-9]+)?$/.test(decimalInput)) {
         console.log("error: invalid input");
         errmsg = "Invalid input. You must enter a decimal number."
         document.getElementById("err-msg").innerText = errmsg
@@ -14,32 +124,38 @@ function convertToDecimal64() {
     strDec = document.getElementById("decimalInput").value
     exp = document.getElementById("exponent").value
 
-    dec = parseInt(strDec)
+    console.log(strDec)
+    console.log(exp)
 
-    console.log(dec)
+    let sbit
+    [sbit, strDec, exp] = normalize(strDec, exp)
+    let msd = strDec.charAt(0)
+
+    console.log(strDec)
     console.log(exp)
 
     //if dec input is greater than 16 digits
-    if (dec > 9999999999999999) {
-        console.log("error")
-    }
+    // if (dec > 9999999999999999) {
+    //     console.log("error")
+    // }
+    
 
-    let msd = ''
+    // let msd = ''
 
-    //checks for negative
-    if(dec < 0) {
-        sbit = 1
-        msd = strDec.charAt(1)
-    }
-    else {
-        sbit = 0
-        msd = strDec.charAt(0)
-    }
+    // //checks for negative
+    // if(dec < 0) {
+    //     sbit = 1
+    //     msd = strDec.charAt(1)
+    // }
+    // else {
+    //     sbit = 0
+    //     msd = strDec.charAt(0)
+    // }
 
     console.log(`Sign bit: ${sbit}`)
     console.log(`MSD: ${msd}`)
 
-    let eprime = parseInt(exp) + 398
+    let eprime = exp + 398
     console.log(`E': ${eprime}`)
 
     function decimalToBinary(decimalNumber) { 
@@ -164,78 +280,78 @@ function convertToDecimal64() {
     let f5 = ''
 
     //gets coeff continuation checks if sign bit is pos or nega
-    if(sbit == 0) {
-        function dec1(string) {
-            let coeffcont = string.substring(1, 4)
-        
-            return coeffcont
-        }
-
-        function dec2(string) {
-            let coeffcont = string.substring(4, 7);
-        
-            return coeffcont;
-        }
-
-        function dec3(string) {
-            let coeffcont = string.substring(7, 10);
-        
-            return coeffcont;
-        }
-
-        function dec4(string) {
-            let coeffcont = string.substring(10, 13);
-        
-            return coeffcont;
-        }
-
-        function dec5(string) {
-            let coeffcont = string.substring(13, 16);
-        
-            return coeffcont;
-        }
-        f1 = dec1(strDec)
-        f2 = dec2(strDec)
-        f3 = dec3(strDec)
-        f4 = dec4(strDec)
-        f5 = dec5(strDec)
-    }  
-    else {
-        function dec1(string) {
-            let coeffcont = string.substring(2, 5)
-        
-            return coeffcont
-        }
+    // if(sbit == 0) {
+    function dec1(string) {
+        let coeffcont = string.substring(1, 4)
     
-        function dec2(string) {
-            let coeffcont = string.substring(5, 8);
-        
-            return coeffcont;
-        }
+        return coeffcont
+    }
+
+    function dec2(string) {
+        let coeffcont = string.substring(4, 7);
     
-        function dec3(string) {
-            let coeffcont = string.substring(8, 11);
-        
-            return coeffcont;
-        }
+        return coeffcont;
+    }
+
+    function dec3(string) {
+        let coeffcont = string.substring(7, 10);
     
-        function dec4(string) {
-            let coeffcont = string.substring(11, 14);
-        
-            return coeffcont;
-        }
+        return coeffcont;
+    }
+
+    function dec4(string) {
+        let coeffcont = string.substring(10, 13);
     
-        function dec5(string) {
-            let coeffcont = string.substring(14, 17);
+        return coeffcont;
+    }
+
+    function dec5(string) {
+        let coeffcont = string.substring(13, 16);
+    
+        return coeffcont;
+    }
+    f1 = dec1(strDec)
+    f2 = dec2(strDec)
+    f3 = dec3(strDec)
+    f4 = dec4(strDec)
+    f5 = dec5(strDec)
+    // }  
+    // else {
+    //     function dec1(string) {
+    //         let coeffcont = string.substring(2, 5)
         
-            return coeffcont;
-        }
-        f1 = dec1(strDec)
-        f2 = dec2(strDec)
-        f3 = dec3(strDec)
-        f4 = dec4(strDec)
-        f5 = dec5(strDec)
-    } 
+    //         return coeffcont
+    //     }
+    
+    //     function dec2(string) {
+    //         let coeffcont = string.substring(5, 8);
+        
+    //         return coeffcont;
+    //     }
+    
+    //     function dec3(string) {
+    //         let coeffcont = string.substring(8, 11);
+        
+    //         return coeffcont;
+    //     }
+    
+    //     function dec4(string) {
+    //         let coeffcont = string.substring(11, 14);
+        
+    //         return coeffcont;
+    //     }
+    
+    //     function dec5(string) {
+    //         let coeffcont = string.substring(14, 17);
+        
+    //         return coeffcont;
+    //     }
+    //     f1 = dec1(strDec)
+    //     f2 = dec2(strDec)
+    //     f3 = dec3(strDec)
+    //     f4 = dec4(strDec)
+    //     f5 = dec5(strDec)
+    // } 
 
     console.log('Coeff Cont. Decimal:')
     console.log(f1)
