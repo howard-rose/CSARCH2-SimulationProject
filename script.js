@@ -43,10 +43,10 @@ function roundTo16(coeffStr, isNegative) {
         case '2zero':
             coeffNum_fraction_rounded = 0
             break
-        case '2posinf':
+        case 'rndup':
             coeffNum_fraction_rounded = isNegative ? 0 : roundUp(first_fraction_digit) 
             break
-        case '2neginf':
+        case 'rndown':
             coeffNum_fraction_rounded = isNegative ? roundUp(first_fraction_digit) : 0
     }
 
@@ -328,7 +328,7 @@ function convertToDecimal64() {
     }
 
     // NEW UPDATE : added trailing zeros for 0/"denormalized" cases
-    if (cf == "01000") {
+    if (cf === "01000") {
         strDec = '0'.repeat(50)
     }
 
