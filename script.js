@@ -111,31 +111,20 @@ function normalize(coeffInput, expInput) {
 function exportTxtFile(sbit, cf, expfield, bcd1, bcd2, bcd3, bcd4, bcd5, dec64hex){
     let content = `sign-bit: ${sbit}\ncombination field: ${cf}\n` +
                   `exponent field: ${expfield}\ncoefficient continuation: ${bcd1} ${bcd2} ${bcd3} ${bcd4} ${bcd5}\n` +
-                  `hexadecimal: ${dec64hex}`;
+                  `hexadecimal: ${dec64hex}`
 
     let blob = new Blob([content], { type: "text/plain;charset=utf-8" })
     let url = URL.createObjectURL(blob)
     let a = document.getElementById('convertButton')
-    a.href = url;
-    a.download = 'convertedOutput.txt';
-    a.click();
+    a.href = url
+    a.download = 'convertedOutput.txt'
 }
 
 function convertToDecimal64() {
     // let dec = 0
-    let exp = 0
-    let errmsg = ""    
 
-    let decimalInput = document.getElementById("decimalInput").value;
-    if (!/^-?[0-9]+(?:\.[0-9]+)?$/.test(decimalInput)) {
-        console.log("error: invalid input");
-        errmsg = "Invalid input. Try Again"
-        document.getElementById("err-msg").innerText = errmsg
-        return;
-    }
-
-    strDec = document.getElementById("decimalInput").value
-    exp = document.getElementById("exponent").value
+    let exp = document.getElementById("exponent").value
+    let strDec = document.getElementById("decimalInput").value
 
     console.log(strDec)
     console.log(exp)
@@ -197,16 +186,30 @@ function convertToDecimal64() {
 
     let cf = ''
     //gets combi field
-    if (parseInt(msd) < 8) {
-        cf = binEp.substring(0,2) + binMsd.slice(-3)
-    }
-    else {
-        cf = "11" + binEp.substring(0,2) + binMsd.slice(-1)
+    // new update: added special cases
+    if (exp > 369) {
+        cf = "11110"
+    } else if (exp < -398){
+        cf = "01000"
+    } else if (exp == "nan" || exp == "NaN" || exp == "NAN") {
+        cf = '11111'
+    } else {
+        if (parseInt(msd) < 8) {
+            cf = binEp.substring(0,2) + binMsd.slice(-3)
+        }
+        else {
+            cf = "11" + binEp.substring(0,2) + binMsd.slice(-1)
+        }
     }
     console.log(`Combi Field: ${cf}`)
 
     //exp field
-    expfield = binEp.slice(-8)
+    // new update: added denormalized case i.e. exp = < -398
+    if (cf === "01000") {
+        expfield = "01100101"
+    } else {
+        expfield = binEp.slice(-8)
+    }
     console.log(`Exp Field: ${expfield}`)
 
     //makes int to packed bcd, pads 0s if less than 4 bits
@@ -323,6 +326,12 @@ function convertToDecimal64() {
     
         return coeffcont;
     }
+
+    // NEW UPDATE : added trailing zeros for 0/"denormalized" cases
+    if (cf == "01000") {
+        strDec = '0'.repeat(50)
+    }
+
     f1 = dec1(strDec)
     f2 = dec2(strDec)
     f3 = dec3(strDec)
@@ -379,6 +388,8 @@ function convertToDecimal64() {
     bcd4 = decimalToDenselyPackedBCD(f4)
     bcd5 = decimalToDenselyPackedBCD(f5)
 
+
+
     console.log('Coeff Cont. BCD:')
     console.log(bcd1)
     console.log(bcd2)
@@ -412,4 +423,36 @@ function convertToDecimal64() {
     document.getElementById("exp-cont").innerText = expfield
     document.getElementById("coeff-cont").innerText = bcd1 + " " + bcd2 + " " + bcd3 + " " + bcd4 + " " + bcd5
     document.getElementById("decimal64Output").innerText = dec64hex
+}
+
+function checkInput () {
+    let decErrFlag = false
+    let expErrFlag = false
+
+    document.getElementById("err-msg").innerText = ""
+
+    let decimalInput = document.getElementById("decimalInput").value
+    let exp = document.getElementById("exponent").value
+    if (!/^-?[0-9]+(?:\.[0-9]+)?$/.test(decimalInput)) {
+        console.log("error: invalid input");
+        decErrFlag = true
+    }
+    if (!(parseInt(exp) || exp.toLowerCase() === "nan")) {
+        console.log("error: invalid exponent");
+        expErrFlag = true
+    }
+
+    if (decErrFlag || expErrFlag) {
+        let errmsg = ""
+        if (decErrFlag) {
+            errmsg += "Invalid decimal. "
+        }
+        if (expErrFlag) {
+            errmsg += "Invalid exponent. "
+        }
+        errmsg += "Try Again."
+        document.getElementById("err-msg").innerText = errmsg
+    } else {
+        convertToDecimal64()
+    }
 }
