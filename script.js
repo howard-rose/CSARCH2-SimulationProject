@@ -162,10 +162,8 @@ function convertToDecimal64() {
 
     function decimalToBinary(decimalNumber) { 
         let binaryString = decimalNumber.toString(2)
-        let leadingZeros = 4 - binaryString.length
-
         // Pad the binary string with leading zeros
-        let paddedBinaryString = '0'.repeat(leadingZeros) + binaryString
+        let paddedBinaryString = binaryString.padStart(4, '0')
 
         return paddedBinaryString
     }
@@ -173,8 +171,7 @@ function convertToDecimal64() {
     //makes e' to binary
     function epToBinary(decimalNumber) { 
         let binaryString = decimalNumber.toString(2)
-        let leadingZeros = 10 - binaryString.length
-        let paddedBinaryString = '0'.repeat(leadingZeros) + binaryString
+        let paddedBinaryString = binaryString.padStart(10, '0')
 
         return paddedBinaryString
     } 
