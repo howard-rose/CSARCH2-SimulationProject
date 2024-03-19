@@ -24,6 +24,7 @@ body {
     font-size: 28px;
     text-align: center;
     justify-content: center;
+    align-items: center;
 }
   
 .inp-choices {
@@ -116,4 +117,5 @@ button {
     text-decoration: underline;
     font-weight: 500;
     color: #ffdb73;
+    margin-top: 15px;
 }

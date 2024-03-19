@@ -108,6 +108,19 @@ function normalize(coeffInput, expInput) {
     return [sign_bit, coeff, exp]
 }
 
+function exportTxtFile(sbit, cf, expfield, bcd1, bcd2, bcd3, bcd4, bcd5, dec64hex){
+    let content = `sign-bit: ${sbit}\ncombination field: ${cf}\n` +
+                  `exponent field: ${expfield}\ncoefficient continuation: ${bcd1} ${bcd2} ${bcd3} ${bcd4} ${bcd5}\n` +
+                  `hexadecimal: ${dec64hex}`;
+
+    let blob = new Blob([content], { type: "text/plain;charset=utf-8" })
+    let url = URL.createObjectURL(blob)
+    let a = document.getElementById('convertButton')
+    a.href = url;
+    a.download = 'convertedOutput.txt';
+    a.click();
+}
+
 function convertToDecimal64() {
     // let dec = 0
     let exp = 0
@@ -116,7 +129,7 @@ function convertToDecimal64() {
     let decimalInput = document.getElementById("decimalInput").value;
     if (!/^-?[0-9]+(?:\.[0-9]+)?$/.test(decimalInput)) {
         console.log("error: invalid input");
-        errmsg = "Invalid input. You must enter a decimal number."
+        errmsg = "Invalid input. Try Again"
         document.getElementById("err-msg").innerText = errmsg
         return;
     }
@@ -389,6 +402,10 @@ function convertToDecimal64() {
         return hexString;
     }
     let dec64hex = binaryToHex(dec64)
+    console.log(document.getElementById("exptxt").checked)
+    if (document.getElementById("exptxt").checked) {
+        exportTxtFile(sbit, cf, expfield, bcd1, bcd2, bcd3, bcd4, bcd5, dec64hex)
+    }
     console.log(`Dec-64 Hex: ${dec64hex}`)
     document.getElementById("sign-bit").innerText = sbit
     document.getElementById("comb-field").innerText = cf

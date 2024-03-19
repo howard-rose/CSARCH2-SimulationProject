@@ -8,21 +8,13 @@
         <div class="container">
             IEEE754 Double Precision 64-bit<br>Floating Point Converter
             <div class="inp-choices">
-                <div>Input option:</div>
-                <div><input class="ms-60" type="radio" id="binType" name="inputOption" value="binary">
-                <label for="binType">Binary</label>
-                <input class="ms-16" type="radio" id="decType" name="inputOption" value="decimal" checked>
-                <label for="decType">Decimal</label></div>
-            </div>
-            <div class="inp-choices">
                 <label for="round">Rounding option:</label>
                 <div>
                     <select name="round" id="round" class="ms-16">
-                        <option value="2even">nearest, ties to even</option>
-                        <option value="2notz">nearest, ties away from zero</option>
-                        <option value="2zero">to zero</option>
-                        <option value="2posinf">to (+) infinity</option>
-                        <option value="2neginf">to (-) infinity</option>
+                        <option value="2even">Truncate</option>
+                        <option value="2notz">Round Up</option>
+                        <option value="2zero">Round Down</option>
+                        <option value="2posinf">nearest, ties to even</option>
                       </select>
                 </div>
             </div>
@@ -36,7 +28,7 @@
                 <label>E</label>
                 <input type="text" id="exponent">
             </div>
-            <button onclick="convertToDecimal64()">Convert</button>
+            <a id="convertButton"><button id="convertButton" onclick="convertToDecimal64()">Convert</button></a>
             <div id="err-msg"></div>
 
             <div class="output">
