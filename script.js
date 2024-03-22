@@ -156,7 +156,7 @@ function convertToDecimal64() {
 
   //combi field
   let cf = "";
-  if (exp > 369) {
+  if (exp > 767) {
     cf = "11110"; // positive inf
   } else if (exp < -398) {
     cf = "01000"; // negative inf or zero
