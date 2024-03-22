@@ -114,11 +114,27 @@ function exportTxtFile(sbit, cf, expfield, bcd1, bcd2, bcd3, bcd4, bcd5, dec64he
 }
 
 function convertToDecimal64() {
+  let specialCase = false
+  let caseType = ""
   let exp = document.getElementById("exponent").value;
   let strDec = document.getElementById("decimalInput").value;
 
   console.log(strDec);
   console.log(exp);
+
+  if (exp > 369) {
+    specialCase = true
+    caseType = "posinf"
+    //cf = "11110"; // positive inf
+  } else if (exp < -398) {
+    specialCase = true
+    caseType = "neginf"
+    //cf = "01000"; // negative inf or zero
+  } else if (isNaN(exp)) {
+    specialCase = true
+    caseType = "NaN"
+    //cf = "11111"; // NaN
+  }
 
   let sbit;
   [sbit, strDec, exp] = normalize(strDec, exp);
@@ -156,12 +172,14 @@ function convertToDecimal64() {
 
   //combi field
   let cf = "";
-  if (exp > 767) {
-    cf = "11110"; // positive inf
-  } else if (exp < -398) {
-    cf = "01000"; // negative inf or zero
-  } else if (isNaN(exp)) {
-    cf = "11111"; // NaN
+  if (specialCase) {
+    if (caseType === "positive inf") {
+      cf = "11110";
+    } else if (caseType === "negainf") {
+      cf = "01000";
+    } else if (caseType === "NaN") {
+      cf = "11111";
+    }
   } else {
     if (parseInt(msd) < 8) {
       cf = binEp.substring(0, 2) + binMsd.slice(-3);
@@ -171,10 +189,13 @@ function convertToDecimal64() {
   }
 
   //exp field
-  if (cf === "11111" || cf === "00000") {
-    expfield = "00000000"; // NaN or positive inf
-  } else if (cf === "01000") {
-    expfield = "10001110"; // negative inf or zero
+  let expfield = "";
+  if (specialCase) {
+    if (caseType === "posinf" || caseType === "NaN") {
+      expfield = "00000000";
+    } else if (caseType === "neginf") {
+      expfield = "10001110";
+    }
   } else {
     expfield = binEp.slice(-8);
   }
@@ -354,7 +375,7 @@ function convertToDecimal64() {
   }
 
   // NEW UPDATE : added trailing zeros for 0/"denormalized" cases
-  if (cf === "01000") {
+  if (specialCase === true && caseType === "neginf") {
     strDec = "0".repeat(50);
   }
 
