@@ -173,7 +173,7 @@ function convertToDecimal64() {
   //combi field
   let cf = "";
   if (specialCase) {
-    if (caseType === "positive inf") {
+    if (caseType === "posinf") {
       cf = "11110";
     } else if (caseType === "neginf") {
       cf = "01000";
