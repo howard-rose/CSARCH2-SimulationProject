@@ -156,7 +156,7 @@ function roundTo16(coeffStr, isNegative) {
   
     //combi field
     let cf = "";
-    if (exp > 767) {
+    if (exp > 369) {
       cf = "11110"; // positive inf
     } else if (exp < -398) {
       cf = "01000"; // negative inf or zero
@@ -354,7 +354,7 @@ function roundTo16(coeffStr, isNegative) {
     }
   
     // NEW UPDATE : added trailing zeros for 0/"denormalized" cases
-    if (cf === "01000") {
+    if (exp == 0 || exp < -398) {
       strDec = "0".repeat(50);
     }
   
