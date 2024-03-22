@@ -175,7 +175,7 @@ function convertToDecimal64() {
   if (specialCase) {
     if (caseType === "positive inf") {
       cf = "11110";
-    } else if (caseType === "negainf") {
+    } else if (caseType === "neginf") {
       cf = "01000";
     } else if (caseType === "NaN") {
       cf = "11111";
