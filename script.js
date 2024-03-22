@@ -130,7 +130,7 @@ function roundTo16(coeffStr, isNegative) {
     console.log(`Sign bit: ${sbit}`);
     console.log(`MSD: ${msd}`);
   
-    let eprime = parseInt(exp) + 398;
+    let eprime = exp + 398;
     console.log(`E': ${eprime}`);
   
     function decimalToBinary(decimalNumber) {
@@ -172,7 +172,7 @@ function roundTo16(coeffStr, isNegative) {
     //exp field
     if (cf === "11111" || cf === "00000") {
       expfield = "00000000"; // NaN or positive inf
-    } else if (eprime == 398) {
+    } else if (exp == 0 || exp < -398) {
       expfield = "10001110"; // negative inf or zero
     } else {
       console.log(`E' bin: ${binEp}`);
