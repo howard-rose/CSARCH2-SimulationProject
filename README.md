@@ -9,3 +9,5 @@ Santiago, Philip
 This repository contains the simulation project for the subject CSARCH2 Term 2 AY 2023-2024.
 
 **Documentation Video Link: https://youtu.be/j77KiUpwWxo**
+
+**Link to Deployed App: https://howard-rose.github.io/CSARCH2-SimulationProject/**
